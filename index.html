@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>テストイベント 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0a0a0f;
+      --surface:  #12121c;
+      --border:   #1e1e30;
+      --cyan:     #00f5ff;
+      --magenta:  #ff2d78;
+      --text:     #e8e8f0;
+      --muted:    #6b6b88;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans JP', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── SCANLINE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,245,255,0.015) 2px,
+        rgba(0,245,255,0.015) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(0,245,255,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(255,45,120,0.06) 0%, transparent 60%);
+    }
+
+    .hero-eyebrow {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.3em;
+      color: var(--cyan);
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .hero-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2.8rem, 10vw, 7rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      position: relative;
+      text-shadow: 0 0 40px rgba(0,245,255,0.3);
+    }
+
+    .hero-title .accent { color: var(--cyan); }
+
+    /* glitch */
+    .glitch {
+      position: relative;
+      display: inline-block;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .glitch::before {
+      color: var(--magenta);
+      clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%);
+      transform: translate(-3px, 0);
+      animation: glitch-a 4s infinite steps(1);
+    }
+    .glitch::after {
+      color: var(--cyan);
+      clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%);
+      transform: translate(3px, 0);
+      animation: glitch-b 4s infinite steps(1);
+    }
+    @keyframes glitch-a {
+      0%,90%,100% { opacity: 0; transform: translate(-3px,0); }
+      91%,99%     { opacity: 1; transform: translate(-3px, 2px); }
+    }
+    @keyframes glitch-b {
+      0%,85%,100% { opacity: 0; transform: translate(3px,0); }
+      86%,98%     { opacity: 1; transform: translate(3px,-2px); }
+    }
+
+    .hero-date {
+      margin-top: 2rem;
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1rem, 3vw, 1.5rem);
+      color: var(--muted);
+      letter-spacing: 0.2em;
+    }
+    .hero-date span { color: var(--text); }
+
+    .hero-cta {
+      margin-top: 3rem;
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      font-family: 'Orbitron', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      text-decoration: none;
+      text-transform: uppercase;
+      position: relative;
+      transition: color 0.2s;
+    }
+    .hero-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--cyan);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.25s ease;
+      z-index: -1;
+    }
+    .hero-cta:hover { color: var(--bg); }
+    .hero-cta:hover::before { transform: scaleX(1); }
+
+    /* ── COUNTDOWN ── */
+    .countdown-wrap {
+      padding: 4rem 2rem;
+      text-align: center;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .countdown-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+    }
+    .countdown {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .countdown-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .countdown-num {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      font-weight: 700;
+      color: var(--cyan);
+      line-height: 1;
+      min-width: 2ch;
+      text-align: center;
+    }
+    .countdown-unit-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .countdown-sep {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      color: var(--border);
+      align-self: center;
+      padding-bottom: 1.2rem;
+    }
+
+    /* ── SECTION BASE ── */
+    section { padding: 5rem 2rem; max-width: 900px; margin: 0 auto; }
+
+    .section-eyebrow {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      color: var(--magenta);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 700;
+      margin-bottom: 2rem;
+      color: var(--text);
+    }
+
+    /* ── ABOUT ── */
+    .about-body {
+      color: #9090aa;
+      line-height: 1.9;
+      font-size: 1rem;
+      max-width: 640px;
+    }
+
+    /* ── SCHEDULE ── */
+    .schedule-list { list-style: none; }
+    .schedule-item {
+      display: grid;
+      grid-template-columns: 6rem 1fr;
+      gap: 1.5rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .schedule-time {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.85rem;
+      color: var(--cyan);
+      padding-top: 0.15rem;
+    }
+    .schedule-name { font-weight: 700; margin-bottom: 0.3rem; }
+    .schedule-desc { font-size: 0.85rem; color: var(--muted); }
+
+    /* ── REGISTER ── */
+    .register-wrap {
+      text-align: center;
+      padding: 5rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .register-wrap .section-eyebrow { justify-content: center; display: block; }
+    .register-wrap .section-title { justify-content: center; }
+    .register-body { color: var(--muted); margin-bottom: 2.5rem; }
+    .register-btn {
+      display: inline-block;
+      padding: 1.1rem 3rem;
+      background: var(--magenta);
+      color: #fff;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .register-btn:hover { opacity: 0.85; transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 480px) {
+      .schedule-item { grid-template-columns: 1fr; gap: 0.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <p class="hero-eyebrow">// 2026 GAMING CHAMPIONSHIP</p>
+  <h1 class="hero-title">
+    <span class="glitch" data-text="テスト">テスト</span><br>
+    <span class="accent">イベント</span>
+  </h1>
+  <p class="hero-date">DATE &nbsp;—&nbsp; <span>2026.07.01</span></p>
+  <a href="#register" class="hero-cta">今すぐ参加登録</a>
+</section>
+
+<!-- COUNTDOWN -->
+<div class="countdown-wrap">
+  <p class="countdown-label">// Event Starts In</p>
+  <div class="countdown">
+    <div class="countdown-unit">
+      <span class="countdown-num" id="cd-days">--</span>
+      <span class="countdown-unit-label">Days</span>
+    </div>
+    <span class="countdown-sep">:</span>
+    <div class="countdown-unit">
+      <span class="countdown-num" id="cd-hours">--</span>
+      <span class="countdown-unit-label">Hours</span>
+    </div>
+    <span class="countdown-sep">:</span>
+    <div class="countdown-unit">
+      <span class="countdown-num" id="cd-mins">--</span>
+      <span class="countdown-unit-label">Mins</span>
+    </div>
+    <span class="countdown-sep">:</span>
+    <div class="countdown-unit">
+      <span class="countdown-num" id="cd-secs">--</span>
+      <span class="countdown-unit-label">Secs</span>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <p class="section-eyebrow">// About</p>
+  <h2 class="section-title">最強のプレイヤーを決める戦い</h2>
+  <p class="about-body">
+    テストイベントは、腕に自信のあるプレイヤーが集う真剣勝負のゲーム大会です。<br>
+    初心者から上級者まで、誰もが熱くなれるトーナメント形式で開催。<br>
+    7月1日、最高の舞台でその実力を証明しよう。
+  </p>
+</section>
+
+<!-- SCHEDULE -->
+<section id="schedule" style="border-top: 1px solid var(--border); max-width:900px;">
+  <p class="section-eyebrow">// Schedule</p>
+  <h2 class="section-title">当日のスケジュール</h2>
+  <ul class="schedule-list">
+    <li class="schedule-item">
+      <span class="schedule-time">10:00</span>
+      <div>
+        <p class="schedule-name">受付開始</p>
+        <p class="schedule-desc">参加者登録・機材チェック</p>
+      </div>
+    </li>
+    <li class="schedule-item">
+      <span class="schedule-time">11:00</span>
+      <div>
+        <p class="schedule-name">予選ラウンド</p>
+        <p class="schedule-desc">グループ戦・総当たり形式</p>
+      </div>
+    </li>
+    <li class="schedule-item">
+      <span class="schedule-time">14:00</span>
+      <div>
+        <p class="schedule-name">決勝トーナメント</p>
+        <p class="schedule-desc">上位プレイヤーによる一発勝負</p>
+      </div>
+    </li>
+    <li class="schedule-item">
+      <span class="schedule-time">17:00</span>
+      <div>
+        <p class="schedule-name">表彰式</p>
+        <p class="schedule-desc">上位入賞者への賞品授与・記念撮影</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- REGISTER -->
+<div class="register-wrap" id="register">
+  <p class="section-eyebrow">// Entry</p>
+  <h2 class="section-title" style="font-family:'Orbitron',monospace;font-size:clamp(1.4rem,4vw,2rem);">参加登録はこちら</h2>
+  <p class="register-body">定員になり次第締め切ります。お早めにご登録ください。</p>
+  <a href="#" class="register-btn">エントリーする</a>
+</div>
+
+<footer>
+  &copy; 2026 テストイベント &nbsp;|&nbsp; All Rights Reserved
+</footer>
+
+<script>
+  const target = new Date('2026-07-01T10:00:00+09:00');
+  function update() {
+    const now = new Date();
+    const diff = target - now;
+    if (diff <= 0) {
+      document.getElementById('cd-days').textContent = '00';
+      document.getElementById('cd-hours').textContent = '00';
+      document.getElementById('cd-mins').textContent = '00';
+      document.getElementById('cd-secs').textContent = '00';
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cd-days').textContent  = String(d).padStart(2,'0');
+    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-mins').textContent  = String(m).padStart(2,'0');
+    document.getElementById('cd-secs').textContent  = String(s).padStart(2,'0');
+  }
+  update();
+  setInterval(update, 1000);
+</script>
+</body>
+</html>
